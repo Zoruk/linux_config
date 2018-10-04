@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -e
+
+if [[ -z "$1" ]]; then
+    echo "usage $0 <CN>"
+    exit 1
+fi
+
+EASYRSA_ARGS="nopass"
+
+readonly DIR=$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")")
+
+OVPN_DIR="${DIR}/vpnconfig/"
+OVPN_TEMPLATE="${DIR}/template.ovpn"
+
+cd $DIR
+
+./easyrsa build-client-full "$1" ${EASYRSA_ARGS}
+
+mkdir -p ${OVPN_DIR}
+
+CLI_OVPN="${OVPN_DIR}/${1}/$1.ovpn"
+mkdir -p ${OVPN_DIR}/${1}
+cp ${OVPN_TEMPLATE} ${CLI_OVPN}
+
+sed -i -e "/__CA_CRT__/ {
+    r ${DIR}/pki/ca.crt
+    d }" \
+    -e "/__CLI_CRT__/ {
+    r ${DIR}/pki/issued/${1}.crt
+    d }" \
+    -e "/__CLI_KEY_/ {
+    r ${DIR}/pki/private/${1}.key
+    d }" ${CLI_OVPN}
+
+cp "${DIR}/pki/ca.crt" "${DIR}/pki/issued/${1}.crt" "${DIR}/pki/private/${1}.key" "${OVPN_DIR}/${1}"
+
+cd ${OVPN_DIR}/${1}
+tar cfvz ../${1}.tar.gz ./*
+

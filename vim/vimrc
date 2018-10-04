@@ -1,0 +1,223 @@
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+Plugin 'Valloric/YouCompleteMe'
+
+Plugin 'SirVer/ultisnips'                       " snippets
+Plugin 'honza/vim-snippets'                     " ultisnips dependency
+Plugin 'scrooloose/nerdtree'                    " tree explorer
+Plugin 'scrooloose/nerdcommenter'               " commenting
+Plugin 'tomasr/molokai'                         " molokai colorscheme
+Plugin 'scrooloose/syntastic'                   " syntax checking
+Plugin 'bling/vim-airline'                      " status/tabline
+Plugin 'nathanaelkane/vim-indent-guides'        " visually display indent levels in code
+Plugin 'flazz/vim-colorschemes'                 " Choose from a variety of colorschemes
+Plugin 'qpkorr/vim-bufkill'                     " Kill buffer with :BD without closing the window
+Plugin 'vim-scripts/AnsiEsc.vim'                " Interpret bash ansi characters
+Plugin 'mkarmona/colorsbox'
+Plugin 'jeaye/color_coded'
+
+" The following are examples of different formats supported.
+" Keep Plugin commands between vundle#begin/end.
+" plugin on GitHub repo
+"Plugin 'tpope/vim-fugitive'
+" plugin from http://vim-scripts.org/vim/scripts.html
+"Plugin 'L9'
+" Git plugin not hosted on GitHub
+"Plugin 'git://git.wincent.com/command-t.git'
+" git repos on your local machine (i.e. when working on your own plugin)
+"Plugin 'file:///home/gmarik/path/to/plugin'
+" The sparkup vim script is in a subdirectory of this repo called vim.
+" Pass the path to set the runtimepath properly.
+"Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+" Install L9 and avoid a Naming conflict if you've already installed a
+" different version somewhere else.
+Plugin 'ascenator/L9', {'name': 'newL9'}
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+"
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+
+set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
+
+let g:color_coded_enabled = 1
+let g:color_coded_filetypes = ['c', 'cpp', 'objc']
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" General settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+set fileformat=unix
+set fileencoding=utf-8
+
+" syntax highlighting
+"
+syntax on
+
+" Use the system clipboard instead of vim's internal clipboard
+" Makes it easier to c/p to other applications
+
+set clipboard=unnamedplus
+
+" Disable matchparen so syntax hl won't lag! (Especially for HTML with JS
+" inside)
+
+let loaded_matchparen = 1
+
+" Disable color_coded in diff mode
+if &diff
+"  let g:color_coded_enabled = 0
+endif
+
+" Color theme
+
+set t_Co=256
+let g:solarized_termcolors=256
+colorscheme awe
+"colorscheme twilighted
+"colorscheme monokai-chris
+"awe
+
+set guifont=Monospace\ 8
+
+" Highlight the screen line of the cursor
+
+set cursorline
+hi CursorLine term=bold cterm=bold guibg=Grey40
+
+" Automatically remove trailing whitespaces on save
+
+if has("autocmd")
+	autocmd BufWritePre * :%s/\s\+$//e
+endif
+
+" If using a dark background within the editing area and syntax highlighting
+" turn on this option as well
+" set background=dark
+
+" Uncomment the following to have Vim jump to the last position when
+" reopening a file
+if has("autocmd")
+	au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
+
+map <F3> 	:FufFile<CR>
+map <F4> 	:NERDTree<CR>
+
+
+set showcmd		" Show (partial) command in status line.
+set showmatch		" Show matching brackets.
+set ignorecase		" Do case insensitive matching
+set smartcase		" Do smart case matching
+set incsearch		" Incremental search
+set autowrite		" Automatically save before commands like :next and :make
+set hidden      	" Hide buffers when they are abandoned
+set mouse=a		" Enable mouse usage (all modes)
+
+set number
+" set expandtab
+set tabstop=4
+set shiftwidth=4
+
+" Source a global configuration file if available
+if filereadable("/etc/vim/vimrc.local")
+	source /etc/vim/vimrc.local
+endif
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Snippets
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let g:UltiSnipsExpandTrigger       = "<c-k>"
+let g:UltiSnipsJumpForwardTrigger  = "<c-j>"
+let g:UltiSnipsJumpBackwardTrigger = "<c-p>" " TODO doesn't work!
+let g:UltiSnipsListSnippets        = "<c-l>"
+let g:UltiSnipsEditSplit           = "vertical"
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Language specific configuration
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+autocmd FileType python set sw=4
+autocmd FileType python set ts=4
+autocmd FileType python set sts=4
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" airline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 1
+:set laststatus=2
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" indent-guides - visually displaying indent levels in code
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" type \ig to enable/disable
+let g:indent_guides_auto_colors = 0
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=236
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=235
+
+
+" Latex plugin
+set grepprg=grep\ -nH\ $*
+let g:tex_flavor = "latex"
+
+" Continuation lines for C indenting
+
+set noet sts=0 sw=4 ts=4
+set cindent
+set cinoptions=(0,u0,U0
+
+" ctab
+" let g:ctab_filetype_maps
+
+" Assign F9 to make
+:map <f9> :make
+
+" NERDTree
+map <C-n> :NERDTreeToggle <CR>
+let NERDTreeHijackNetrw=1 " Use instead of Netrw when doing an edit /foobar
+let NERDTreeMouseMode=1 " Single click for everything
+" Open NERDTree by default if no files are specified
+autocmd StdinReadPre * let s:std_in=1
+function! StartNERDTree()
+	if argc() == 0 && !exists("s:std_in")
+		execute ":NERDTree"
+		wincmd p
+	endif
+endfunction
+autocmd VimEnter * :call StartNERDTree()
+" Close vim if NERDTree is the only window left open
+autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
+" Useful mappings for managing tabs
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove
+
+" disable pylint
+let g:syntastic_mode_map = { 'passive_filetypes': ['python'] }
