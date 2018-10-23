@@ -221,3 +221,7 @@ map <leader>tm :tabmove
 
 " disable pylint
 let g:syntastic_mode_map = { 'passive_filetypes': ['python'] }
+
+" Sude save Write
+command W :execute ':silent w !sudo tee % > /dev/null' | :edit!
+
